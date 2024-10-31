@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mysql
-  Namespace: expense
+  namespace: expense
   labels:
     app: mysql
     tier: db
@@ -24,6 +24,5 @@ spec:
       containers:
       - name: mysql
         image: prash6645/mysql:v1
-        ports:
-        - containerPort: 3306
+        
 
