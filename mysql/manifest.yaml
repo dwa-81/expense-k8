@@ -1,3 +1,47 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: mysql
+#   namespace: expense
+#   labels:
+#     app: mysql
+#     tier: db
+#     project: expense
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: mysql
+#       tier: db
+#       project: expense
+#   template:
+#     metadata:
+#       labels:
+#         app: mysql
+#         tier: db
+#         project: expense
+#     spec:
+#       containers:
+#       - name: mysql
+#         image: prash6645/mysql:v1
+        
+# kind: Service
+# apiVersion: v1
+# metadata:
+#    name: mysql
+#    namespace: expense
+# spec:
+#   selector:
+#     app: mysql
+#     tier: db
+#     project: expense
+#   ports:
+#   - name: mysql-port
+#     protocol: TCP
+#     port: 3306
+#     targetPort: 3306
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -8,7 +52,7 @@ metadata:
     tier: db
     project: expense
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: mysql
@@ -24,12 +68,22 @@ spec:
       containers:
       - name: mysql
         image: prash6645/mysql:v1
-        
+        readinessProbe:
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 15
+          periodSeconds: 10
+        livenessProbe:
+          tcpSocket:
+            port: 3306
+          initialDelaySeconds: 15
+          periodSeconds: 10
+---
 kind: Service
 apiVersion: v1
 metadata:
-   name: mysql
-   namespace: expense
+  name: mysql
+  namespace: expense
 spec:
   selector:
     app: mysql
@@ -38,5 +92,5 @@ spec:
   ports:
   - name: mysql-port
     protocol: TCP
-    port: 3306
-    targetPort: 3306
+    port: 3306 # service port
+    targetPort: 3306 # container port
